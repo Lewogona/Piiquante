@@ -20,8 +20,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
+app.use((req, res) => {
+    res.json('Votre requête a bien été reçue !')
 })
 
 app.use("/api/auth", userRoutes);
