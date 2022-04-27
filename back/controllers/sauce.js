@@ -40,7 +40,14 @@ exports.modifySauce = (req, res, next) => {
 
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
-        .then(sauce => {
+        .then((sauce) => {
+            if (!sauce) {
+                return res.status(404).json({ error: "Sauce non trouvée !" })
+            };
+            if (sauce.userId !== req.auth.userId) {
+                return res.status(401).json({ error: new Error("Requête non autorisée !") })
+            };
+            
             const filename = sauce.imageUrl.split("/images/")[1];
             fs.unlink(`images/${filename}`, () => {
                 Sauce.deleteOne({ _id: req.params.id })
