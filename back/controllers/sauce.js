@@ -33,9 +33,9 @@ exports.getOneSauce = (req, res, next) => {
         .catch(error => req.status(404).json({ error }));
 };
 
-// Update the sauce info
+// Modify the sauce info
 exports.modifySauce = (req, res, next) => {
-    // Find if sauce exist with the sauce ID
+    // Find if sauce exists with the sauce ID
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
             if (!sauce) {
@@ -45,6 +45,7 @@ exports.modifySauce = (req, res, next) => {
                 return res.status(401).json({ error: "Requête non autorisée !" })
             }
             
+            // If the image is modified, delete previous image. If not, only update the new info
             if(req.file) {
                 const filename = sauce.imageUrl.split("/images/")[1];
                 fs.unlink(`images/${filename}`, () => {
@@ -57,6 +58,7 @@ exports.modifySauce = (req, res, next) => {
         .catch(error => res.status(500).json({ error }));   
 }
 
+// Update sauce in database
 function updateSauce(req, res) {
     const sauceObject = req.file ?
     {
@@ -69,7 +71,9 @@ function updateSauce(req, res) {
         .catch(error => res.status(403).json({ error }));
 }
 
+// Delete sauce
 exports.deleteSauce = (req, res, next) => {
+    // Find if sauce exists with the sauce ID
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
             if (!sauce) {
@@ -79,6 +83,7 @@ exports.deleteSauce = (req, res, next) => {
                 return res.status(401).json({ error: "Requête non autorisée !" })
             }
             
+            // Delete the sauce and its image
             const filename = sauce.imageUrl.split("/images/")[1];
             fs.unlink(`images/${filename}`, () => {
                 Sauce.deleteOne({ _id: req.params.id })
@@ -89,7 +94,9 @@ exports.deleteSauce = (req, res, next) => {
         .catch(error => res.status(500).json({ error }));
 };
 
+// Like or dislike a sauce
 exports.likeSauce = (req, res, next) => {
+    // Find the sauce with sauce ID
     Sauce.findOne({ _id: req.params.id })
         .then(sauce => {
             const isLiked = sauce.usersLiked.find((userLikedId) => {
@@ -100,43 +107,55 @@ exports.likeSauce = (req, res, next) => {
                 return userDislikedId === req.body.userId;
             })
 
+            // if the user wants to like/dislike when already liked/disliked
             if (req.body.like === 0) {
+                // they cancel their like
                 if (isLiked) {
                     sauce.likes -= 1;
                     sauce.usersLiked = sauce.usersLiked.filter((userLikedId) => {
                         return userLikedId !== req.body.userId;
                     })
                 }
+                // they cancel their dislike
                 if (isDisliked) {
                     sauce.dislikes -= 1;
                     sauce.usersDisliked = sauce.usersDisliked.filter((userDislikedId) => {
                         return userDislikedId !== req.body.userId;
                     })
                 }
-            } else if (req.body.like === 1) {
+            } 
+            // if the user wants to like
+            else if (req.body.like === 1) { 
+                // and they never liked before
                 if (!isLiked) {
                     sauce.likes += 1;
                     sauce.usersLiked.push(req.body.userId);
                 }
+                // and they already disliked before
                 if (isDisliked) {
                     sauce.dislikes -= 1;
                     sauce.usersDisliked = sauce.usersDisliked.filter((userDislikedId) => {
                         return userDislikedId !== req.body.userId;
                     })
                 }
-            } else if (req.body.like === -1) {
+            } 
+            // if the user wants to dislike
+            else if (req.body.like === -1) {
+                // and they already liked before
                 if (isLiked) {
                     sauce.likes -= 1;
                     sauce.usersLiked = sauce.usersLiked.filter((userLikedId) => {
                         return userLikedId !== req.body.userId;
                     })
                 }
+                // and they never disliked before
                 if (!isDisliked) {
                     sauce.dislikes += 1;
                     sauce.usersDisliked.push(req.body.userId);
                 }
             }
-                
+            
+            // Update new like, dislike or cancellation
             Sauce.updateOne({ _id: req.params.id }, {
                 likes: sauce.likes, usersLiked: sauce.usersLiked,
                 dislikes: sauce.dislikes, usersDisliked: sauce.usersDisliked
