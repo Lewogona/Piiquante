@@ -1,6 +1,13 @@
 # Piiquante API
 
-This project was created with [Express](https://github.com/expressjs/express), [Mongoose](https://github.com/Automattic/mongoose), [Mongoose Unique Validator](https://github.com/blakehaswell/mongoose-unique-validator), [Multer](https://github.com/expressjs/multer), [JSON Web Token](https://github.com/joaquimserafim/json-web-token) and [Bcrypt](https://github.com/kelektiv/node.bcrypt.js)
+This project was created with :
+- [NodeJS](https://nodejs.org/en/)
+- [Express](https://github.com/expressjs/express)
+- [Mongoose](https://github.com/Automattic/mongoose)
+- [Mongoose Unique Validator](https://github.com/blakehaswell/mongoose-unique-validator)
+- [Multer](https://github.com/expressjs/multer)
+- [JSON Web Token](https://github.com/joaquimserafim/json-web-token)
+- [Bcrypt](https://github.com/kelektiv/node.bcrypt.js)
 
 ## Install
 
