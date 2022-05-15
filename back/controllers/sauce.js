@@ -43,10 +43,10 @@ exports.deleteSauce = (req, res, next) => {
         .then((sauce) => {
             if (!sauce) {
                 return res.status(404).json({ error: "Sauce non trouvée !" })
-            };
+            }
             if (sauce.userId !== req.auth.userId) {
-                return res.status(401).json({ error: new Error("Requête non autorisée !") })
-            };
+                return res.status(401).json({ error: "Requête non autorisée !" })
+            }
             
             const filename = sauce.imageUrl.split("/images/")[1];
             fs.unlink(`images/${filename}`, () => {
