@@ -7,7 +7,7 @@ const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
 
 const app = express();
-console.log(process.env.MONGODB_URI)
+
 mongoose.connect(process.env.MONGODB_URI,
     { useNewUrlParser: true,
         useUnifiedTopology: true })
