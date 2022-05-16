@@ -1,17 +1,18 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+require('dotenv').config()
 
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
 
 const app = express();
-
-mongoose.connect('mongodb+srv://Lewogona:gaxUK2VQF9w81Eb6@cluster0.pi6d3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-  { useNewUrlParser: true,
-    useUnifiedTopology: true })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
+console.log(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI,
+    { useNewUrlParser: true,
+        useUnifiedTopology: true })
+    .then(() => console.log('Connexion à MongoDB réussie !'))
+    .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 app.use(express.json());
 
